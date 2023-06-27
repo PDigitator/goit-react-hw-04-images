@@ -17,7 +17,6 @@ const App = () => {
   const [largeImageURL, setLargeImageURL] = useState('');
   const [tags, setTags] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
-  const [perPage, setPerPage] = useState(12);
   const [totalPages, setTotalPages] = useState(0);
   const [showModal, setShowModal] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -27,13 +26,43 @@ const App = () => {
       return;
     }
 
-    fetchImmagesData();
+    const fetchImmagesData = async () => {
+      setIsLoading(true);
 
+      try {
+        const {
+          response: { data },
+          perPage,
+        } = await fetchImmages(searchQuery, currentPage);
+        takeImmages(data, perPage);
+      } catch (error) {
+        console.log(error); //???
+        Report.failure('ERROR', `${error.message}`, 'Close');
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    const takeImmages = ({ hits, totalHits }, perPage) => {
+      if (hits.length !== 0) {
+        setImages(prevState => [...prevState, ...hits]);
+        setTotalPages(totalHits / perPage);
+      } else {
+        Notify.failure(
+          'Sorry, there are no images matching your search query. Please try again.'
+        );
+      }
+    };
+
+    fetchImmagesData();
+  }, [searchQuery, currentPage]);
+
+  useEffect(() => {
     window.scrollTo({
       top: document.documentElement.scrollHeight,
       behavior: 'smooth',
     });
-  }, [searchQuery, currentPage]);
+  }, [images]);
 
   const getQuery = query => {
     if (query === searchQuery && query !== '') return;
@@ -45,31 +74,6 @@ const App = () => {
     } else {
       Notify.info(
         'Sorry, you need to fill in the search field to search for images.'
-      );
-    }
-  };
-
-  const fetchImmagesData = async () => {
-    setIsLoading(true);
-
-    try {
-      const { data } = await fetchImmages(searchQuery, currentPage, perPage);
-      takeImmages(data);
-    } catch (error) {
-      console.log(error); //???
-      Report.failure('ERROR', `${error.message}`, 'Close');
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const takeImmages = ({ hits, totalHits }) => {
-    if (hits.length !== 0) {
-      setImages(prevState => [...prevState, ...hits]);
-      setTotalPages(totalHits / perPage);
-    } else {
-      Notify.failure(
-        'Sorry, there are no images matching your search query. Please try again.'
       );
     }
   };
