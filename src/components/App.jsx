@@ -22,7 +22,7 @@ const App = () => {
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
-    if (searchQuery === '') {
+    if (!searchQuery) {
       return;
     }
 
