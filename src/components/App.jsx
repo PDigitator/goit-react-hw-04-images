@@ -2,8 +2,8 @@ import { useState, useEffect } from 'react';
 
 import { Notify } from 'notiflix/build/notiflix-notify-aio';
 import { Report } from 'notiflix/build/notiflix-report-aio';
-import fetchImmages from 'helpers/api';
 
+import fetchImmages from 'helpers/api';
 import Searchbar from 'components/Searchbar/Searchbar';
 import Section from 'components/Section/Section';
 import ImageGallery from 'components/ImageGallery/ImageGallery';
@@ -117,3 +117,14 @@ const App = () => {
 };
 
 export default App;
+
+// rafce //!
+// import React from 'react'
+
+// const App = () => {
+//   return (
+//     <div>App</div>
+//   )
+// }
+
+// export default App
